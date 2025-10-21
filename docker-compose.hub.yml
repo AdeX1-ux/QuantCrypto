@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: crypto_ai_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: crypto_ai_db
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - crypto_ai_network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    image: adexx1/crypto-ai-backend:latest
+    container_name: crypto_ai_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URL=mongodb://admin:password123@mongodb:27017/crypto_ai_db?authSource=admin
+      - DB_NAME=crypto_ai_db
+      - ETHERSCAN_API_KEY=${ETHERSCAN_API_KEY:-E93F4XZ6EBEHDACUYUR4VNGH258YRGHQ91}
+      - TWITTER_API_KEY=${TWITTER_API_KEY:-h9FeLgu9uYhFZDysHkkRHlsWU}
+      - TWITTER_API_SECRET=${TWITTER_API_SECRET:-tbNG9veNZVkUgDjcb7Z3cK8JMhDJJiKb6LaBIqrXiueMAlnl6J}
+      - TWITTER_BEARER_TOKEN=${TWITTER_BEARER_TOKEN:-your_bearer_token_here}
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY:-your_claude_key_here}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - crypto_ai_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    image: adexx1/crypto-ai-frontend:latest
+    container_name: crypto_ai_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000}
+      - REACT_APP_WS_URL=${REACT_APP_WS_URL:-ws://localhost:8000}
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - crypto_ai_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mongodb_data:
+
+networks:
+  crypto_ai_network:
+    driver: bridge

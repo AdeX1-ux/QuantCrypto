@@ -1,0 +1,52 @@
+# Core FastAPI dependencies
+fastapi==0.110.1
+uvicorn==0.25.0
+motor==3.3.1
+# Pin PyMongo to a version compatible with Motor to avoid _QUERY_OPTIONS import error
+pymongo==4.6.1
+pydantic>=2.6.4
+python-dotenv>=1.0.1
+python-jose>=3.3.0
+python-multipart>=0.0.9
+
+# HTTP Client
+aiohttp>=3.9.0
+requests>=2.31.0
+
+# Authentication
+bcrypt==4.1.3
+passlib>=1.7.4
+pyjwt>=2.0.0
+email-validator>=2.2.0
+tzdata>=2024.2
+
+# Data Science & ML (compatible with Python 3.8)
+pandas>=1.5.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+xgboost>=1.7.0
+lightgbm>=3.3.0
+ta>=0.10.0
+
+# Exchange APIs
+ccxt>=4.2.0
+
+# On-chain
+web3>=6.0.0
+solana>=0.30.0
+
+# Social Media
+tweepy>=4.14.0
+praw>=7.7.0
+
+# Emergent LLM Integration (optional)
+# emergentintegrations  # commented out: package not available on PyPI
+
+# Storage & Cache
+redis>=5.0.0
+
+# Testing
+pytest>=8.0.0
+black>=24.1.1
+isort>=5.13.2
+flake8>=7.0.0
