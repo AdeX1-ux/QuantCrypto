@@ -74,7 +74,7 @@ crypto-ai-trading-system/
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone <https://github.com/AdeX1-ux/QuantCrypto>
 cd crypto-ai-trading-system
 ```
 
